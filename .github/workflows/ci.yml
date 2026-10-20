@@ -1,0 +1,42 @@
+name: CI
+
+# 两套装的用例是 bash 写的，只能在有 /tmp 的 Linux 上跑：
+#   · Windows：node -e 里 `/tmp/x` 会被解释成 `C:\tmp\x`，故障注入失效 → 07-restore 假红
+#   · Android/Termux：根分区只读，根本没有 /tmp → 全线连锁失败
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  suites:
+    name: 两套装全量用例
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 包完整性门禁（knowledge 指纹锁 / 模板 / 命令 / 全链路冒烟）
+        run: bash writing-master-skill-suite/scripts/wm-verify.sh
+
+      - name: 两套装全量用例（各 17 组 / 655 条断言）
+        run: |
+          set -e
+          for s in writing-master-skill-suite writing-master-mcp-suite; do
+            echo "===== $s ====="
+            bash "$s/tests/run.sh"
+          done
+
+      - name: 留档测试报告（跑挂也能拿到现场）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: writing-master-report
+          path: |
+            writing-master-skill-suite/tests/REPORT.md
+            writing-master-mcp-suite/tests/REPORT.md

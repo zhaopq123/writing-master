@@ -1,0 +1,5 @@
+# 统一 LF：这套东西全是 bash 脚本，CRLF 会让 Linux 上直接 exec 失败
+* text=auto eol=lf
+*.sh text eol=lf
+*.mjs text eol=lf
+*.js text eol=lf

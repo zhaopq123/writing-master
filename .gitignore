@@ -1,0 +1,6 @@
+# 跑测产物：跑一次 tests/run.sh 就重写，且带本机路径
+**/tests/.tap.txt
+**/tests/.run.log
+**/.tmp/
+node_modules/
+*.log
