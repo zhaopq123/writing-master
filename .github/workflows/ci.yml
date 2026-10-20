@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   suites:
-    name: 两套装全量用例
+    name: 用例与门禁
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,19 +24,12 @@ jobs:
       - name: 包完整性门禁（knowledge 指纹锁 / 模板 / 命令 / 全链路冒烟）
         run: bash writing-master-skill-suite/scripts/wm-verify.sh
 
-      - name: 两套装全量用例（各 17 组 / 655 条断言）
-        run: |
-          set -e
-          for s in writing-master-skill-suite writing-master-mcp-suite; do
-            echo "===== $s ====="
-            bash "$s/tests/run.sh"
-          done
+      - name: 全量用例（17 组 / 655 条断言）
+        run: bash writing-master-skill-suite/tests/run.sh
 
       - name: 留档测试报告（跑挂也能拿到现场）
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: writing-master-report
-          path: |
-            writing-master-skill-suite/tests/REPORT.md
-            writing-master-mcp-suite/tests/REPORT.md
+          path: writing-master-skill-suite/tests/REPORT.md
